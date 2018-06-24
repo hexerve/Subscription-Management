@@ -1,3 +1,4 @@
+'use strict';
 var jwt = require('jsonwebtoken');
 var config = require('../config');
 function verifyToken(req, res, next) {
