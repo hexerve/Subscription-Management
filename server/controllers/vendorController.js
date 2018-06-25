@@ -2,13 +2,13 @@ var mongoose = require('mongoose');
 var Vendor = require('../models/vendorModel');
 var User = require('../models/userModel');
 var userControllers = require('../controllers/userController');
+var initialize_vendor = require('../helper/initialize_vendor');
 
 Vendor = mongoose.model('vendor');
 
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var config = require('../config');
-var VerifyToken = require('../routes/verifyToken');
 
 // vendor controllers
 module.exports.current_vendor = function(req, res) {
@@ -52,7 +52,7 @@ module.exports.register = function(req, res) {
         });
 
         //initialize new collections for this vendor
-        userControllers.new_vendor(vendor._id);
+        initialize_vendor.new_vendor(vendor._id);
         
         res.send({statusCode: 200, auth: true, token: token});
     });  
