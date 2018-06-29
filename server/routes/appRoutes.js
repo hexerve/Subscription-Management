@@ -3,7 +3,7 @@ module.exports = function(app) {
     var vendorControllers = require('../controllers/vendorController');
     var userControllers = require('../controllers/userController');
 
-    var VerifyToken = require('./VerifyToken');
+    var VerifyToken = require('../helper/verifyToken');
 
     // Routes
     app.get("/", function(req, res){
