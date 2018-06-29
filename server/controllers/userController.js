@@ -1,40 +1,15 @@
 var mongoose = require('mongoose');
 var Vendor = require('../models/vendorModel');
 var User = require('../models/userModel');
+var initialize_vendor = require('../helper/initialize_vendor');
 
 Vendor = mongoose.model('vendor');
 
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var config = require('../config');
-var VerifyToken = require('../routes/verifyToken');
-
-var User = {};
-var arr = [];
-
-Vendor.find({},function(err, vendors){
-    if(err)
-        res.send({"err": "unexpectedError", "code": "404"});
-    
-    vendors.forEach(vendor => {
-        arr.push(vendor._id);
-        var User1 = require('../models/userModel')(vendor._id);
-        var User1 = mongoose.model('v' + vendor._id + 'user');
-        User[vendor._id] = User1;
-    });
-    console.log(arr);
-    console.log("API is ready to use now!");
-});
-
 
 // user controllers
-module.exports.new_vendor =function(id){
-    arr.push(id);
-    var User1 = require('../models/userModel')(id);
-    var User1 = mongoose.model('v' + id + 'user');
-    User[id] = User1;
-    console.log(arr);
-};
 
 module.exports.current_user = function(req, res) {
     if(req.userId.length !== 48){
@@ -42,7 +17,7 @@ module.exports.current_user = function(req, res) {
     }
     var v_id = mongoose.Types.ObjectId(req.userId.substr(0,24));
     req.userId = mongoose.Types.ObjectId(req.userId.substr(24,48));
-    var UserConstructor = User[v_id];
+    var UserConstructor = initialize_vendor.User[v_id];
 
     UserConstructor.findById(req.userId, 
         { password: 0 }, // projection
@@ -60,7 +35,7 @@ module.exports.register = function(req, res) {
         return res.send({"statusCode":422, "status":"Unprocessable Entity", message:"Incorrect v_id"});
     }
     var v_id = mongoose.Types.ObjectId(req.body.v_id);
-    var UserConstructor = User[v_id];
+    var UserConstructor = initialize_vendor.User[v_id];
 
     UserConstructor.create({
         username: req.body.username, password: hashedPassword,
@@ -94,7 +69,7 @@ module.exports.login = function(req, res) {
         return res.send({"statusCode":422, "status":"Unprocessable Entity", message:"Incorrect v_id"});
     }
     var v_id = mongoose.Types.ObjectId(req.body.v_id);
-    var UserConstructor = User[v_id];
+    var UserConstructor = initialize_vendor.User[v_id];
 
     UserConstructor.findOne({ username: req.body.username }, function (err, user) {
         if (err) return res.send({statusCode: 500, status: "Error on the server"});
